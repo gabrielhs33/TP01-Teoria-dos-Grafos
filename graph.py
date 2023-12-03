@@ -47,16 +47,26 @@ class Graph:
                         neighbors.append((new_x, new_y))
         return neighbors
 
-    def load_image(self, file_name:str) -> Image.Image:
+    def load_image(self, file : str) -> Image.image:
+        """
+        Load an image from a file.
 
+        Parameters:
+        - file (str): The image file path.
+
+        Returns:
+        - Image.image: An image object representing the loaded image.
+
+        Raises:
+        - Exception: If an error occurs when opening the image.
+        """
         try:
-            
-            image = Image.open(file_name)
-            
-        except KeyError:
-            print('error to load image')
-
-        return image
+            # Tenta abrir a imagem usando a biblioteca Pillow (PIL).
+            image = Image.open(file)
+            return image
+        except Exception as e:
+            # Captura excecoes que podem ocorrer ao abrir a imagem.
+            print(f"Error opening image: {e}")
     
     def build_graph(self, image_name:str) -> None:
 
@@ -74,8 +84,3 @@ class Graph:
                     current_neighbors = self.get_neighbors(x, y, width, height,image)
                     for pixel in current_neighbors:        
                         self.add_undirected_edge(current_pixel, pixel, 1)
-
-    
-
-        
-
