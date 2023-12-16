@@ -2,7 +2,7 @@ from PIL import Image
 
 class Graph:
 
-    def __init__(self) -> None:
+    def __init__(self)  -> None:
 
         self.num_nodes = 0
         self.num_edges = 0
