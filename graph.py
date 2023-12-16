@@ -107,6 +107,7 @@ class Graph:
         C = [t]
         aux = t
         while aux != s:
+            print("entrou")
             aux = pred[aux]
             C.insert(0, aux)
             
