@@ -2,7 +2,7 @@ from PIL import Image
 
 class Graph:
 
-    def __init__(self) -> None:
+    def __init__(self)  -> None:
 
         self.num_nodes = 0
         self.num_edges = 0
@@ -71,11 +71,59 @@ class Graph:
                 current_pixel = (x, y)
                 pixel_color = image.getpixel(current_pixel)
                 if pixel_color != (0,0,0):
+                    
+                    if pixel_color == (255,0,0):
+                        origin = pixel
+                    if pixel_color == (0,255,0):
+                        destiny = pixel
                     current_neighbors = self.get_neighbors(x, y, width, height,image)
                     for pixel in current_neighbors:        
                         self.add_undirected_edge(current_pixel, pixel, 1)
+        return (origin, destiny)                
 
+    def bfs(self, s:any):
+        
+        dist = {}
+        pred = {}
+        
+        for v in self.adj:
+            dist[v] = float("inf")
+            pred[v] = None
+                 
+        Q = [s]
+        dist[s] = 0
+        while len(Q) > 0:
+            u = Q.pop(0)            
+            for v in self.adj[u]:
+                if dist[v] == float('inf'):
+                    Q.append(v)
+                    dist[v] = dist[u] + 1
+                    pred[v] = u
+        
+        return pred 
     
-
+    def recover_path(self, s, t, pred:list) -> list:
+        
+        C = [t]
+        aux = t
+        while aux != s:
+            print("entrou")
+            aux = pred[aux]
+            C.insert(0, aux)
+            
+        return C 
+    
+    def drawn_map(self,pred:list,image_name:str):
+        
+        img = Image.open(image_name)
+        pixels = img.load()
+        
+        for v in pred:
+            x,y = v
+            pixels[x,y] =  (0,0,255)
+        
+        img.save("nova.bmp")    
+           
+            
         
 
