@@ -1,6 +1,10 @@
 from graph import Graph
 
 g = Graph()
-g.build_graph("./Datasets/0_floor.bmp")
+origin , destiny = g.build_graph("./Datasets/toy.bmp")
+
 print(g.num_nodes)
 print(g.num_edges)
+c = g.recover_path(origin,destiny,g.bfs(origin))
+print(c)
+g.drawn_map(c,"./Datasets/toy.bmp")
