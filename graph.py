@@ -62,7 +62,7 @@ class Graph:
     self.add_directed_edge(u, v, weight)
     self.add_directed_edge(v, u, weight)
 
-  def load_image(self, file: str) -> Image.image:
+  def load_image(self, file_name: str) -> Image.Image:
     """
     Load an image from a file.
 
@@ -77,7 +77,7 @@ class Graph:
     """
     try:
       # Tenta abrir a imagem usando a biblioteca Pillow (PIL).
-      image = Image.open(file)
+      image = Image.open(file_name)
       return image
     except Exception as e:
       # Captura excecoes que podem ocorrer ao abrir a imagem.
