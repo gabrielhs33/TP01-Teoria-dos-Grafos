@@ -223,10 +223,10 @@ class Graph:
     - path: List of coordinates representing the path to be drawn.
     - image_name: The name of the image file to be read and modified.
     """
-    image = Image.open(image_name).convert("RGB")
+    image = Image.open(image_name)
     pixels = image.load()
     for v in path:
       x, y = v
       pixels[x, y] = (0, 0, 255)
     # Save the resulting image with the drawn path.
-    image.save("nova.bmp")
+    image.save("./Datasets/nova.bmp")
