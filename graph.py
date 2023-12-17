@@ -137,9 +137,15 @@ class Graph:
         pixel_color = image.getpixel(current_pixel)
         
         # Check if the pixel is not black.
-        if pixel_color != (0, 0, 0):
+        if pixel_color in [(255,255,255),(255,0,0),(0,255,0)]:
+          
+          if pixel_color == (255,0,0):
+            source_pixel = current_pixel
+          if pixel_color == (0,255,0):
+            destination_pixel = current_pixel  
           # Add edges for the non-black pixel.
           self.add_edges_for_pixel(current_pixel, width, height, image)
+    return source_pixel,destination_pixel      
 
   def add_edges_for_pixel(self, coordinates: tuple, width: int, height: int, image: Image.Image) -> None:
     """
@@ -159,38 +165,7 @@ class Graph:
     # Add edges between the current pixel and its neighbors.
     for neighbor_coordinates in current_neighbors:
         self.add_undirected_edge(coordinates, neighbor_coordinates, 1)
-
-  def find_source_and_destination_pixels(self, image_name: str) -> Tuple[Tuple[int, int], Tuple[int, int]]:
-    """
-    Find the source (red) and destination (green) pixels in the given image.
-
-    Parameters:
-    - image (Image.Image): The input image.
-
-    Returns:
-    - A tuple containing the coordinates of the source and destination pixels.
-    """
-    image = self.load_image(image_name)
-    width, height = image.size
-
-    source_pixel = None
-    destination_pixel = None
-
-    for x in range(width):
-      for y in range(height):
-        currenct_pixel = (y, x)
-        pixel_color = image.getpixel(currenct_pixel)
-
-        if pixel_color == (255, 0, 0):
-          source_pixel = (x, y)
-
-        if pixel_color == (0, 255, 0):
-          destination_pixel = (x, y)
         
-        # Break the loop if both source and destination pixel are found.
-        if source_pixel and destination_pixel:
-          break
-    return (source_pixel, destination_pixel)
 
   def path_bfs(self, source_pixel: any, destination_pixel: any) -> List[Any]:
     """
@@ -254,4 +229,4 @@ class Graph:
       x, y = v
       pixels[x, y] = (0, 0, 255)
     # Save the resulting image with the drawn path.
-    image.save("E:\Pandora's Box\Documents\Faculdade\Teoria dos Grafos\Trabalho Prático 01\Datasets\path.bmp")
+    image.save("nova.bmp")
