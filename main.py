@@ -27,7 +27,6 @@ if source_pixel and destination_pixel:
         print("Nao há caminho possivel.")
 else:
     print("Pixel origem e/ou destino nao encontrados.")
-    
-    
+       
 print(graph.num_nodes)
 print(graph.num_edges)

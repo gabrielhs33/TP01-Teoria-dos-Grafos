@@ -72,9 +72,12 @@ class ImageViewer(tk.Frame):
         
         source_pixel, destination_pixel= self.graph.build_graph(self.image_path)
         path = self.graph.path_bfs(source_pixel, destination_pixel)
-        self.graph.drawn_path(path, self.image_path)
-        self.original_image = Image.open("./Datasets/nova.bmp")
-        self.display_image()
+        if source_pixel not in path or destination_pixel not in path:
+            messagebox.showerror("nao foi possivel gerar um caminho")
+        else:    
+            self.graph.drawn_path(path, self.image_path)
+            self.original_image = Image.open("./Datasets/nova.bmp")
+            self.display_image()
 
     def on_key_press(self, event):
         if event.keysym == "plus":
