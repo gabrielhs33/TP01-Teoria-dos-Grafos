@@ -89,36 +89,31 @@ class Graph:
       # Captura excecoes que podem ocorrer ao abrir a imagem.
       print(f"Error opening image: {e}")
 
-  def get_neighbors(self, x: Any, y: Any, width: Any, height: Any, image: Image.Image) -> list[any]:
+  def get_neighbors(self, coordinates: tuple, width: int, height: int, image: Image.Image) -> list[tuple[int, int]]:
     """
     Get non-black neighbors of a pixel in a bitmap image.
 
     Parameters:
-    - x (int): x-coordinate of the pixel.
-    - y (int): y-coordinate of the pixel.
+    - coordinates (tuple): x and y coordinates of the pixel.
     - width (int): Width of the image.
     - height (int): Height of the image.
     - image (Image.Image): The bitmap image.
 
     Returns:
-    - list[any]: A list of coordinates representing non-black neighbors.
+    - list[tuple[int, int]]: A list of coordinates representing non-black neighbors.
     """
     neighbors = []
-    if image.getpixel((x, y)) != (0, 0, 0):
-      for i in range(-1, 2):
-        for j in range(-1, 2):
-          if j == i or j == -i:
-            continue
-          else:
-            coordinate_x = x + i
-            coordinate_y = y + j
+    x, y = coordinates
+    
+    # Define directions to check for neighbors: left, right, up, down.
+    directions = [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]
 
-            # Check if the coordinates are within the image boundaries.
-            is_within_bounds = (0 <= coordinate_x < width) and (0 <= coordinate_y < height)
-
-            if is_within_bounds:
-              if image.getpixel((coordinate_x, coordinate_y)) != (0, 0, 0):
-                neighbors.append((coordinate_x, coordinate_y))
+    # Iterate over each direction.
+    for coordinate_x, coordinate_y in directions:
+        if 0 <= coordinate_x < width and 0 <= coordinate_y < height:
+          pixel_color = image.getpixel((coordinate_x, coordinate_y))
+          if pixel_color != (0, 0, 0):
+            neighbors.append((coordinate_x, coordinate_y))
     return neighbors
 
   def build_graph(self, image_name: str) -> None:
@@ -138,10 +133,32 @@ class Graph:
     # Iterate over all pixels in the image.
     for x in range(width):
       for y in range(height):
-        if image.getpixel((x, y)) != (0, 0, 0):
-          current_neighbors = self.get_neighbors(x, y, width, height, image)
-          for pixel in current_neighbors:
-            self.add_undirected_edge((x, y), pixel, 1)
+        current_pixel = (x, y)
+        pixel_color = image.getpixel(current_pixel)
+        
+        # Check if the pixel is not black.
+        if pixel_color != (0, 0, 0):
+          # Add edges for the non-black pixel.
+          self.add_edges_for_pixel(current_pixel, width, height, image)
+
+  def add_edges_for_pixel(self, coordinates: tuple, width: int, height: int, image: Image.Image) -> None:
+    """
+    Add edges for a non-black pixel in the graph.
+
+    Parameters:
+    - coordinates (tuple): The (x, y) coordinates of the current pixel.
+    - width (int): The width of the image.
+    - height (int): The height of the image.
+
+    Returns:
+    - None
+    """
+    # Get neighbors of the current pixel.
+    current_neighbors = self.get_neighbors(coordinates, width, height, image)
+
+    # Add edges between the current pixel and its neighbors.
+    for neighbor_coordinates in current_neighbors:
+        self.add_undirected_edge(coordinates, neighbor_coordinates, 1)
 
   def find_source_and_destination_pixels(self, image_name: str) -> Tuple[Tuple[int, int], Tuple[int, int]]:
     """
@@ -161,9 +178,7 @@ class Graph:
 
     for x in range(width):
       for y in range(height):
-        currenct_pixel = (x, y)
-
-        # Get the color of the current pixel.
+        currenct_pixel = (y, x)
         pixel_color = image.getpixel(currenct_pixel)
 
         if pixel_color == (255, 0, 0):
@@ -172,12 +187,12 @@ class Graph:
         if pixel_color == (0, 255, 0):
           destination_pixel = (x, y)
         
-        # Break the loop if both source and destination pixel are found. 
+        # Break the loop if both source and destination pixel are found.
         if source_pixel and destination_pixel:
           break
     return (source_pixel, destination_pixel)
 
-  def path_bfs(self, source_pixel: Any, destination_pixel: Any) -> List[Any]:
+  def path_bfs(self, source_pixel: any, destination_pixel: any) -> List[Any]:
     """
     Perform Breadth-First Search (BFS) starting from the specified source node.
 
@@ -199,12 +214,11 @@ class Graph:
           Q.append(v)
           dist[v] = dist[u] + 1
           pred[v] = u
-          # Check if the current pixel is the destination.
           if v == destination_pixel:
             return self.reconstruct_path(source_pixel, destination_pixel, pred)
     return []
   
-  def reconstruct_path(self, source_pixel: Any, destination_pixel: Any, pred: dict) -> List[Any]:
+  def reconstruct_path(self, source_pixel: any, destination_pixel: any, pred: dict) -> List[Any]:
     """
     Reconstruct the path from the source pixel to the destination pixel using the predecessor dictionary.
 
@@ -222,17 +236,22 @@ class Graph:
 
     # Traverse the predecessor dictionary to reconstruct the path.
     while current_pixel != source_pixel:
-      # Move to the predecessor of the currenct pixel.
       current_pixel = pred[current_pixel]
-      # Insert the predecessor at the beginning of the path.
       path.insert(0, current_pixel)
     return path
   
-  def drawn_map(self, pred: list, image_name: str):
-    img = Image.open(image_name).convert("RGB")
-    pixels = img.load()
-    for v in pred:
-      print(v)
+  def drawn_path(self, path: list, image_name: str) -> None:
+    """
+    Draw the specified path on the image and save the resulting image.
+
+    Parameters:
+    - path: List of coordinates representing the path to be drawn.
+    - image_name: The name of the image file to be read and modified.
+    """
+    image = Image.open(image_name).convert("RGB")
+    pixels = image.load()
+    for v in path:
       x, y = v
       pixels[x, y] = (0, 0, 255)
-    img.save("E:\Pandora's Box\Documents\Faculdade\Teoria dos Grafos\Trabalho Prático 01\Datasets\path.bmp")
+    # Save the resulting image with the drawn path.
+    image.save("E:\Pandora's Box\Documents\Faculdade\Teoria dos Grafos\Trabalho Prático 01\Datasets\path.bmp")
