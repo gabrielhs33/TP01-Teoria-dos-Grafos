@@ -1,8 +1,8 @@
 from typing import Any, List, Tuple
 from PIL import Image
+from load_image import load_image
 
 class Graph:
-
   def __init__(self):
     self.num_nodes = 0
     self.num_edges = 0
@@ -62,32 +62,6 @@ class Graph:
     self.add_directed_edge(u, v, weight)
     self.add_directed_edge(v, u, weight)
 
-  def __repr__(self) -> str:
-    str = ""
-    for u in self.adj:
-      str += f"{u} -> {self.adj[u]}\n"
-    return str
-
-  def load_image(self, file: str) -> Image.Image:
-    """
-    Load an image from a file.
-
-    Parameters:
-    - file (str): The image file path.
-
-    Returns:
-    - Image.image: An image object representing the loaded image.
-
-    Raises:
-    - Exception: If an error occurs when opening the image.
-    """
-    try:
-      # Try to open the image using the Pillow library (PIL).
-      image = Image.open(file)
-      return image
-    except Exception as e:
-      print(f"Error opening image: {e}")
-
   def get_neighbors(self, coordinates: tuple, width: int, height: int, image: Image.Image) -> list[tuple[int, int]]:
     """
     Get non-black neighbors of a pixel in a bitmap image.
@@ -126,7 +100,7 @@ class Graph:
     - A tuple containing source and destination pixels representing the edges of the graph.
     """
     # Load the image using the load_image function.
-    image = self.load_image(image_name)
+    image = load_image(image_name)
     width, height = image.size
 
     source_pixel = None
@@ -209,7 +183,6 @@ class Graph:
     Returns:
     - The reconstructed path from the source to the destination.
     """
-    # Initialize the path with the destination pixel.
     path = [destination_pixel]
     current_pixel = destination_pixel
 
@@ -218,22 +191,10 @@ class Graph:
       current_pixel = pred[current_pixel]
       path.insert(0, current_pixel)
     return path
+
+  def __repr__(self) -> str:
+    str = ""
+    for u in self.adj:
+      str += f"{u} -> {self.adj[u]}\n"
+    return str
   
-  def drawn_path(self, path: list, image_name: str) -> None:
-    """
-    Draw the specified path on the image and save the resulting image.
-
-    Parameters:
-    - path: List of coordinates representing the path to be drawn.
-    - image_name: The name of the image file to be read and modified.
-
-    Returns:
-    - None
-    """
-    image = Image.open(image_name).convert("RGB")
-    pixels = image.load()
-    for v in path:
-      x, y = v
-      pixels[x, y] = (0, 0, 255)
-    # Save the resulting image with the drawn path.
-    image.save("./Datasets/possible_path.bmp")
