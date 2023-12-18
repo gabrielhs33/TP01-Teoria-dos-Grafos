@@ -115,7 +115,6 @@ class Graph:
         pixel_color = image.getpixel(current_pixel)
         
         # Check if the pixel is not black.
-<<<<<<< HEAD
         if pixel_color in valid_colors:
           if pixel_color == (255,0,0):
             source_pixel = current_pixel
@@ -127,18 +126,6 @@ class Graph:
           self.add_edges_for_pixel(current_pixel, width, height, image)
     return (source_pixel, destination_pixel)
   
-=======
-        if pixel_color in [(255,255,255),(255,0,0),(0,255,0)]:
-          
-          if pixel_color == (255,0,0):
-            source_pixel = current_pixel
-          if pixel_color == (0,255,0):
-            destination_pixel = current_pixel  
-          # Add edges for the non-black pixel.
-          self.add_edges_for_pixel(current_pixel, width, height, image)
-    return source_pixel,destination_pixel      
-
->>>>>>> 561e5166b9b17e43bf4a4653e4c5ec917f23bad7
   def add_edges_for_pixel(self, coordinates: tuple, width: int, height: int, image: Image.Image) -> None:
     """
     Add edges for a non-black pixel in the graph.
@@ -157,10 +144,6 @@ class Graph:
     # Add edges between the current pixel and its neighbors.
     for neighbor_coordinates in current_neighbors:
         self.add_undirected_edge(coordinates, neighbor_coordinates, 1)
-<<<<<<< HEAD
-=======
-        
->>>>>>> 561e5166b9b17e43bf4a4653e4c5ec917f23bad7
 
   def path_bfs(self, source_pixel: any, destination_pixel: any) -> List[Any]:
     """
@@ -209,23 +192,9 @@ class Graph:
       path.insert(0, current_pixel)
     return path
 
-<<<<<<< HEAD
   def __repr__(self) -> str:
     str = ""
     for u in self.adj:
       str += f"{u} -> {self.adj[u]}\n"
     return str
   
-=======
-    Parameters:
-    - path: List of coordinates representing the path to be drawn.
-    - image_name: The name of the image file to be read and modified.
-    """
-    image = Image.open(image_name)
-    pixels = image.load()
-    for v in path:
-      x, y = v
-      pixels[x, y] = (0, 0, 255)
-    # Save the resulting image with the drawn path.
-    image.save("./Datasets/nova.bmp")
->>>>>>> 561e5166b9b17e43bf4a4653e4c5ec917f23bad7
